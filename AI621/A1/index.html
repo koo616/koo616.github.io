@@ -1,0 +1,246 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>AI621 HW 1 - Gyojung Gu</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body>
+        <div class="container" style="margin-top:20px;">
+            <div class="row">
+                <div class="col-md-12">
+                    <center>
+                        <h1>Homework Assignment 1</h1>
+                        <h3>AI621</h3>
+                        <h2>20218177 Gyojung Gu</h2>
+                    </center>
+                    <hr>
+
+                    <h2>INITIALS</h2>
+                    The image is loaded and assigned to the "im".
+                    The loaded image has 16 bits per integer (uint16) and its width is 4290 and height is 2856.
+                    The image is converted into a double-precision array data type by 'double' function.
+                    <center>
+                    <figure class="figure">
+                        <img src="./figs/initials.png" class="figure-img img-fluid">
+                        <figurecaption>
+                            <center>
+                                Fig 1. Initials
+                            </center>
+                        </figurecaption>
+                    </figure>
+                    </center>
+                    <hr>
+
+                    <h2>LINEARIZATION</h2>
+                    By subtracting 2047 from all image pixels and dividing them by 15000 - 2047, I map the value 2047 to 0 and the value 15000 to 1.
+                    The image is clipped within the range [0, 1] by 'min' and 'max' function.
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/linearization.png" class="figure-img img-fluid">
+                            <figurecaption>
+                                <center>
+                                    Fig 2. Linearization
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    <hr>
+
+                    <h2>IDENTIFYING THE CORRECT BAYER PATTERN</h2>
+                    For identifying the correct pattern, I visualize the images of four patterns using the following code.
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/pattern_code.png" class="figure-img img-fluid">
+                            <figurecaption>
+                                <center>
+                                    Fig 3. Code for visualizing images of four patterns.
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    <center>
+                        <figure class="figure" width>
+                            <img src="./figs/pattern_img.png" class="figure-img img-fluid" alt="Responsive image">
+                            <figurecaption>
+                                <center>
+                                    Fig 4. Images of four patterns.
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    Among the above images, it can be seen that the 'rggb' image has a realistic color, especially since the banana color is yellow.
+                    From this, we can see that our image has 'rggb' pattern.
+                    <hr>
+
+                    <h2>WHITE BALANCING</h2>
+                    I implement the white world and gray world automatic whith balancing.
+                    <center>
+                        <figure class="figure" width>
+                            <img src="./figs/wb_code.png" class="figure-img img-fluid" alt="Responsive image">
+                            <figurecaption>
+                                <center>
+                                    Fig 5. Code of two white balancing algorithms.
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    The maximum value for each color is obtained through the 'max' function, and the average value of red and blue is obtained by the 'mean' function.
+                    The average of green is obtained by adding two sum of green values and dividing it by half the total number of pixels.
+                    The following image is a visualization of the results of each algorithm.
+                    <center>
+                        <figure class="figure" width>
+                            <img src="./figs/wb_imgs.png" class="figure-img img-fluid" alt="Responsive image">
+                            <figurecaption>
+                                <center>
+                                    Fig 6. Visualization of two algorithms.
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    <hr>
+
+                    <h2>DEMOSAICING</h2>
+                    <center>
+                        <figure class="figure" width>
+                            <img src="./figs/demosaic_code.png" class="figure-img img-fluid" alt="Responsive image">
+                            <figurecaption>
+                                <center>
+                                    Fig 7. Code of implemented demosaicing function.
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    For demosaicing red and blue using 'interp2' function, padding is needed.
+                    Matlab's 'interp2' function only interpolates between pixels, so it cannot calculate the values of the right and bottom for red and the left and top for blue.
+                    To obtain a full-resolution red and blue channel, red pixel matrix is padded on the right and bottom and blue pixel matrix is padded on the left and top with replicated values of the edges, followed by an 'interp2' function, and then the padded part is cut to obtain the final result.
+                    <br><br>
+                    In the case of green pixels distributed like checkerboard, it is difficult to interpolate with 'interp2' functions to the best of my knowledge, so I implement bilinear interpolation through convolution.
+                    I checked the instructions not to implement the interplation manually, but I did this because I wanted to implement it accurately, so please understand.
+                    2D convolution is performed on the RAW image using a 3x3 matrix as shown in the image below to obtain the sum of the up, down, left, and right pixels.
+
+                    <center>
+                        <figure class="figure" width>
+                            <img src="./figs/filter.png" class="figure-img img-fluid" alt="Responsive image">
+                            <figurecaption>
+                                <center>
+                                    Fig 8. Filter for demosaicing green.
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    
+                    The values at the corners are divided by 2 because they are the sum of two green pixels, the values at the edges except the corners are divided by 3 because they are the sum of three pixels, 
+                    and the rest are divided by 4 because they are the sum of four adjacent pixels.
+                    By copying the calculated values to the red and blue positions of the RAW image, we can obtain a green full-resolution channel.
+
+                    <center>
+                        <figure class="figure" width>
+                            <img src="./figs/demosaic_imgs.png" class="figure-img img-fluid" alt="Responsive image">
+                            <figurecaption>
+                                <center>
+                                    Fig 9. Visualization of two white balanced images after demosaicing and the cropped image.
+                                    
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    The above images are the results of demosaicing two white balanced images, and the bayer pattern cannot be found when cropped and zoomed.
+                    <hr>
+
+                    <h2>BRIGHTNESS ADJUSTMENT AND GAMMA CORRECTION</h2>
+                    The pre-brightening maximum grayscale values are obtained through the code below.
+                    <center>
+                        <figure class="figure" width>
+                            <img src="./figs/brighten_code.png" class="figure-img img-fluid" alt="Responsive image">
+                            <figurecaption>
+                                <center>
+                                    Fig 10. Implementation of brightening.
+                                    
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    Since the obtained maximum values range from 0 to 1, I interpret the values as percentages and use them to brighten the image.
+                    (For example, if the maximum value is 0.8, the pixel value of the image is increased by 80 percent. I'm not sure if this is the intention of the problem, so please understand.)
+                    <center>
+                        <figure class="figure" width>
+                            <img src="./figs/brighten.png" class="figure-img img-fluid" alt="Responsive image">
+                            <figurecaption>
+                                <center>
+                                    Fig 11. Brightening images.
+                                    
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    As shown in the image above, it looked dark when the brightness was adjusted in this way.
+                    After using several percentages, three times seemed the most appropriate. <br><br>
+
+                    I implemented the gamma correction as shown in the code below, and the result image is shown in the image below.
+                    <center>
+                        <figure class="figure" width>
+                            <img src="./figs/gamma_code.png" class="figure-img img-fluid" alt="Responsive image">
+                            <figurecaption>
+                                <center>
+                                    Fig 12. Implementation of gamma correction.
+                                    
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    I implemented to copy the calculated values to their locations on the copied image, 
+                    because the changed values can result in duplicate calculations of the same pixels when assigned the calculated values to the same image.<br><br>
+                    The final result images with a brightness scale of 300% and gamma correction are as follows.
+                    <center>
+                        <figure class="figure" width>
+                            <img src="./figs/final_image.png" class="figure-img img-fluid" alt="Responsive image">
+                            <figurecaption>
+                                <center>
+                                    Fig 13. Final result of two white balanced images.
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    
+                    As a result of checking the final images, the gray world white-balanced image looks better personally 
+                    because the white world white-balanced image looks somewhat yellowish.
+                    <hr>
+
+                    <h2>COMPRESSION</h2>
+                    The following figure is the jpeg image with quality 95 and the png image.
+                    <center>
+                        <figure class="figure" width>
+                            <img src="./figs/comparing.png" class="figure-img img-fluid" alt="Responsive image">
+                            <figurecaption>
+                                <center>
+                                    Fig 14. Cropped images.<br> (Left) .JPEG with quality 95 (Right) .PNG
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    It was difficult to tell the difference between the two images even when zoomed in.
+                    Since the png image is 16.4 MB and the jpeg image is 3.18 MB, the compression ratio is about 19%.
+                    <center>
+                        <figure class="figure" width>
+                            <img src="./figs/compression.png" class="figure-img img-fluid" alt="Responsive image">
+                            <figurecaption>
+                                <center>
+                                    Fig 15. Images with different qualities. <br>
+                                    (Left) .JPEG with quality 30 (Center) .JPEG with quality 40 (Right) .PNG
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    Referring to the figure above, the lowest quality setting seems to be 40.
+                    When zoomed, there is no significant difference between quality 40 and png, but quality 30 shows a difference in quality, such as visible pixel square shape.
+                    Since the png image is 16.4 MB and the jpeg image with quality 40 is 0.665 MB, the compression ratio is about 4%.
+                    <br><br><br>
+                </div>
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    </body>
+</html>
