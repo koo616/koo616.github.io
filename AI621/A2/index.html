@@ -1,0 +1,108 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>AI621 HW 1 - Gyojung Gu</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body>
+        <div class="container" style="margin-top:20px;">
+            <div class="row">
+                <div class="col-md-12">
+                    <center>
+                        <h1>Homework Assignment 2</h1>
+                        <h3>AI621</h3>
+                        <h2>20218177 Gyojung Gu</h2>
+                    </center>
+                    <hr>
+
+                    <h2>INITIALS AND COLOR TRANSFORMATION (5 PTS)</h2>
+                    I load the video using opencv-python(cv2) library.
+                    I get the number of frames, withd, height and frame per second.
+                    Since converting python list to numpy array is too slow, I make an empty array and insert each frame into the array.
+                    I change the order of the image channel because cv2 load a image or video data in BGR format.
+                    I devide the video by 255 to convert the values to double-precision in the range [0, 1].
+                    <center>
+                    <figure class="figure">
+                        <img src="./figs/load.png" class="figure-img img-fluid">
+                        <figurecaption>
+                            <center>
+                                Fig 1. Load the video and conver to double-precision in the range [0, 1]
+                            </center>
+                        </figurecaption>
+                    </figure>
+                    </center>
+                    <br>
+                    I convert all frame to YIQ color space (FCC NTSC Standard).
+                    Using 'dot' method in numpy, we can transform the color easily
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/YIQ.png" class="figure-img img-fluid">
+                            <figurecaption>
+                                <center>
+                                    Fig 2. RGB to YIQ transformation
+                                </center>
+                            </figurecaption>
+                        </figure>
+                        </center>
+                    I also check the range of the YIQ values.
+                    The value I compute is whitin the correct range.
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/YIQ_range.png" class="figure-img img-fluid">
+                            <img src="./figs/range.png" class="figure-img img-fluid">
+                            <figurecaption>
+                                <center>
+                                    Fig 3. The range of the YIQ
+                                </center>
+                            </figurecaption>
+                        </figure>
+                        </center>
+                    <hr>
+
+                    <h2>LAPLACIAN PYRAMID (20PTS)</h2>
+                    For efficient computation, I make the empty array pyramid with NaN values.
+                    Each frame is down-scaled and up-scaled sequentially by pyrDown and pyrUp functions, which can construct Gaussian pyramid.
+                    The last image is same as the last one in Gaussian pyramid.
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/laplacian.png" class="figure-img img-fluid">
+                            <img src="./figs/face_level0.jpg" class="figure-img img-fluid">
+                            <img src="./figs/face_level1.jpg" class="figure-img img-fluid">
+                            <img src="./figs/face_level2.jpg" class="figure-img img-fluid">
+                            <img src="./figs/face_level3.jpg" class="figure-img img-fluid">
+                            <figurecaption>
+                                <center>
+                                    Fig 4. Laplacian pyramid
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    <hr>
+                    <h2>TEMPORAL FILTERING (30PTS)</h2>
+                    For filtering, an index corresponding to a specific frequency of the Fourier transform result must be obtained.
+                    Since the maximum observable frequency is fps / 2, the last index of the fft result is also fps / 2.
+                    Using this fact, we can get the frequency interval of an array(hop size) and the corresponding index of the specific frequency.
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/filtering1.png" class="figure-img img-fluid">
+                            <img src="./figs/filtering2.png" class="figure-img img-fluid">
+                            <figurecaption>
+                                <center>
+                                    Fig 5. Temporal filtering
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    The first and second image are not filtered according to the paper and the filtered result is amplified and added to the original Laplacian pyramid.
+                    <hr>
+
+                    <br><br><br>
+                </div>
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    </body>
+</html>
