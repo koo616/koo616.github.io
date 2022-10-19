@@ -95,8 +95,81 @@
                         </figure>
                     </center>
                     The first and second image are not filtered according to the paper and the filtered result is amplified and added to the original Laplacian pyramid.
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/face_level2_aplified.jpg" class="figure-img img-fluid">
+                            <img src="./figs/face_level3_aplified.jpg" class="figure-img img-fluid">
+                            <figurecaption>
+                                <center>
+                                    Fig 6. The amplified Laplacian pyramid.
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
                     <hr>
-
+                    <h2>EXTRACTING THE FREQUENCY BAND OF INTEREST (30PTS)</h2>
+                    As shown below, the result of fft seems to have an outliers in the lowest frequency.
+                    To remove it, I remove the front part of the array by about 1 percent.
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/fft_visualize.png" class="figure-img img-fluid">
+                            <img src="./figs/fft_result.png" class="figure-img img-fluid">
+                            <img src="./figs/fft_outliers.png" class="figure-img img-fluid">
+                            <figurecaption>
+                                <center>
+                                    Fig 7. Visualization of fft results
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    First, I defined the frequency band of interest as the area with a large change in value.
+                    To extract this, I set a range of frequencies and find the area
+                    with the largest difference between the maximum and minimum values within the window corresponding to the range.
+                    Using the proposed method, I find that the 'face.mp4' video have 0.5 ~ 1 Hz that is similar with the values presented in the paper.
+                    However, this method has disadvantages in that the range is fixed and the area varies depending on the range.
+                    <center>
+                    <figure class="figure">
+                        <img src="./figs/extract.png" class="figure-img img-fluid">
+                        <img src="./figs/interest.png" class="figure-img img-fluid">
+                        
+                        <figurecaption>
+                            <center>
+                                Fig 8. Extracting the frequency band of interest
+                            </center>
+                        </figurecaption>
+                    </figure>
+                    </center>
+                    <hr>
+                    <h2>IMAGE RECONSTRUCTION</h2>
+                    I reconstruct the amplified image by upscaling and adding the Laplacian pyramid repeatedly.
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/reconstruct.png" class="figure-img img-fluid">
+                            
+                            <figurecaption>
+                                <center>
+                                    Fig 9. Reconstruction code
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    <center>
+                        <video controls>
+                            <source src="./figs/result_face.mp4" type="video/mp4">
+                        </video>
+                    </center>
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/face.png" class="figure-img img-fluid">
+                            <figurecaption>
+                                <center>
+                                    Fig 10. Reconstruction result
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    Although the skin color changes similarly to the video presented in the paper, 
+                    it does not seem to have been implemented properly because of the noise and the moving face.
                     <br><br><br>
                 </div>
             </div>
