@@ -1,0 +1,185 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>AI621 HW 1 - Gyojung Gu</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body>
+        <div class="container" style="margin-top:20px;">
+            <div class="row">
+                <div class="col-md-12">
+                    <center>
+                        <h1>Homework Assignment 3</h1>
+                        <h3>AI621</h3>
+                        <h2>20218177 Gyojung Gu</h2>
+                    </center>
+                    <hr>
+
+                    <h2>TOY PROBLEM (20 PTS)</h2>
+                    I utilze "opencv-python(cv2)" library for the image processing and "scipy" library for the sparse matrix and linear algebra.
+                    For combining all objectives into a single least squre problem, I made the sparse matrix A that have (number of pixels) X (number of pixels) size
+                    and matrix b that have (number of pixel) X (RGB).
+                    They are initialzed by 0 value.
+                    In the for loop for all pixels, the diagonal element that indicates the corresponding pixel is subtracted twice and x, y gradients are calculated to be assigned into the b.
+                    When calculating the gradients, the pixel that does not have the right or down neighbor raises IndexError and the values at the neighbor index will not be added to A nor b.
+                    Finally, the intensity of the top left is added to matrix b to preserve its color.
+                    <center>
+                    <figure class="figure">
+                        <img src="./figs/toy_code.png" class="figure-img img-fluid" style="width:50%">
+                        <img src="./figs/toy_code2.png" class="figure-img img-fluid" style="width:50%">
+                        <figurecaption>
+                            <center>
+                                Fig 1. code for toy problem
+                            </center>
+                        </figurecaption>
+                    </figure>
+                    </center>
+                    The least square problem can be solved with function in scipy and the solution is reconstructed corretly without any error.
+                    <hr>
+    
+
+                    <h2>POISSON BLENDING (50 PTS)</h2>
+                    For the first step to implement the blending, the mask of the source image and the location to be blended are needed.
+                    Using the functions in cv2 library, the mask can be obtained and saved interactively.
+
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/get_mask.png" class="figure-img img-fluid" style="width:50%">
+                            <img src="./figs/get_target.png" class="figure-img img-fluid" style="width:50%">
+                            <figurecaption>
+                                <center>
+                                    Fig 2. functions for a mask and a information of the region te be blended.
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    In a similar way, a user can enter the top left corner of the region where the user wants to blend into.
+
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/blending.png" class="figure-img img-fluid" style="width:70%">
+                            <figurecaption>
+                                <center>
+                                    Fig 3. code for the blending
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    Now we can implement poisson blending exploiting target, source image, a mask of the source image and the target location to be blended.
+                    Extending the toy problem, now four gradients(right, down, left, up) are calculated only inside the mask.
+                    For the second summation of the objectives, I add the value of the target to b on the neighbors that are outside the mask.
+                    Since lsqr function is quite slow on a high-resolution, I use spsolve function which can solve three RGB channel at the same time.
+                    On the regions outside the mask, I design the objective to follow the target image.
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/blend_result.png" class="figure-img img-fluid">
+                            <figurecaption>
+                                <center>
+                                    Fig 4. result of the implemented poisson blending
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    <hr>
+                    <h2>BLENDING WITH MIXED GRADIENTS (10 PTS)</h2>
+                    Blending with mixed gradients can be implemented easily by adding a simple function shown in the below.
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/mixed.png" class="figure-img img-fluid">
+                            <figurecaption>
+                                <center>
+                                    Fig 5. code for the mixed gradients
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    <hr>
+                    <h2>YOUR OWN EXAMPLES (20 PTS)</h2>
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/coca.jpg" class="figure-img img-fluid" style="width:50%">
+                            <img src="./figs/table.jpg" class="figure-img img-fluid" style="width:50%">
+                            <figurecaption>
+                                <center>
+                                    Fig 6. (Example 1) source and target image
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    First exmample is coca-cola on the table.
+                    The color of the coke are changed a lot and there is no significant difference between the two methods.
+                    <center>
+                    <figure class="figure">
+                        <img src="./figs/cola-on-the-table.png" class="figure-img img-fluid" style="width:50%">
+                        <img src="./figs/cola-on-the-table_mixed.png" class="figure-img img-fluid" style="width:50%">
+                        
+                        <figurecaption>
+                            <center>
+                                Fig 7. Coca-cola on the table (without mixed gradients / with mixed gradients)
+                            </center>
+                        </figurecaption>
+                    </figure>
+                    </center>
+
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/dog.jpg" class="figure-img img-fluid" style="width:50%">
+                            <img src="./figs/desert.jpg" class="figure-img img-fluid" style="width:50%">
+                            <figurecaption>
+                                <center>
+                                    Fig 8. (Example 2) source and target image
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    Second exmample is a dog in the desert.
+                    In the poisson blending without mixed gradients, the color of the dog is slightly changed and it fits well to the target background.
+                    However, with mixed gradients, it seems that the dog becomes transparent because it is following the target's gradient.
+                    <center>
+                    <figure class="figure">
+                        <img src="./figs/dog-in-the-desert.png" class="figure-img img-fluid" style="width:50%">
+                        <img src="./figs/dog-in-the-desert_mixed.png" class="figure-img img-fluid" style="width:50%">
+                        
+                        <figurecaption>
+                            <center>
+                                Fig 9. A dog in the desert (without mixed gradients / with mixed gradients)
+                            </center>
+                        </figurecaption>
+                    </figure>
+                    </center>
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/suitcase.jpg" class="figure-img img-fluid" style="width:50%">
+                            <img src="./figs/airport.jpg" class="figure-img img-fluid" style="width:50%">
+                            <figurecaption>
+                                <center>
+                                    Fig 10. (Example 3) source and target image
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    On the last example, it also has a problem that the source image becomes transparent as in the previous example.
+                    <center>
+                    <figure class="figure">
+                        <img src="./figs/suitcase-airport.png" class="figure-img img-fluid" style="width:50%">
+                        <img src="./figs/suitcase-airport_mixed.png" class="figure-img img-fluid" style="width:50%">
+                        
+                        <figurecaption>
+                            <center>
+                                Fig 11. A suitcase in the airport (without mixed gradients / with mixed gradients)
+                            </center>
+                        </figurecaption>
+                    </figure>
+                    </center>
+                    Judging from this phenomenon, it seems to be important to pay attention when using the method with mixed gradients.
+
+                    <br><br><br>
+                </div>
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    </body>
+</html>
