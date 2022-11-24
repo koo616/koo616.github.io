@@ -1,0 +1,230 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>AI621 HW 1 - Gyojung Gu</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body>
+        <div class="container" style="margin-top:20px;">
+            <div class="row">
+                <div class="col-md-12">
+                    <center>
+                        <h1>Homework Assignment 4</h1>
+                        <h3>AI621</h3>
+                        <h2>20218177 Gyojung Gu</h2>
+                    </center>
+                    <hr>
+
+                    <h2>1. HDR IMAGING (50 POINTS)</h2>
+                    <h3>1.1. LINEARIZE RENDERED IMAGES (25 POINTS)</h3>
+                    To reduce computational cost of least-squares problem, images are downsampled.
+                    In order to maintain the balance between RGB channels, the averaged values of color channels are used for optimization.
+                    <center>
+                    <figure class="figure">
+                        <img src="./figs/1-1_code1.png" class="figure-img img-fluid" style="width:50%">
+                        <img src="./figs/1-1_code2.png" class="figure-img img-fluid" style="width:50%">
+                        <figurecaption>
+                            <center>
+                                Fig 1. code for linearization
+                            </center>
+                        </figurecaption>
+                    </figure>
+                    </center>
+                    'tent' and 'uniform' weighting schemes are implemented as function 'w' for constructing least-squres and
+                    the weight is normalized to have a value between 0 and 1.
+                    A function 'get_g' is implemented by referring to the paper "Recovering high dynamic range radiance maps from photographs".
+                    The plot of the predicted function g for each weighting schemes is as follows.
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/tent_weighting.png" class="figure-img img-fluid" style="width:50%">
+                            <img src="./figs/uniform_weighting.png" class="figure-img img-fluid" style="width:50%">
+                            <figurecaption>
+                                <center>
+                                    Fig 2. The predicted function g of the two weighting schemes
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    <hr>
+    
+                    <h3>1.2. MERGE EXPOSURE STACK INTO HDR IMAGE (15 POINTS)</h3>
+                    A python library "rawpy" have same function as "dcraw" in Matlab.
+                    I do white balancing using the camera's profile by activating 'use_camera_wb' parameter,
+                    and use sRGB color space and do demosaicing using AHD. (reference: https://letmaik.github.io/rawpy/api/rawpy.Params.html#rawpy.Params)
+                    RAW and JPG images are downsampled for reducing computational cost and
+                    JPG images are linearized through two optimized function g.
+                    Two linear images are normalized to have values from 0 to 1.
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/1-2_code1.png" class="figure-img img-fluid" style="width:50%">
+                            <figurecaption>
+                                <center>
+                                    Fig 3. Load RAW and linearize JPG files.
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    A function 'get_weight_map' returns the weights for two weighting schemes from input image, which are clipped from 0.01 to 0.99.
+                    Eight HDR images are generated and saved using 'cv2.imwrite'.
+                    Generated HDR images are attached to the KLMS.
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/1-2_code2.png" class="figure-img img-fluid" style="width:50%">
+                            <figurecaption>
+                                <center>
+                                    Fig 4. Code for merging exposure stack into HDR
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+
+
+                    <h2>2. TONEMAPPING (50 POINTS)</h2>
+                    <h3>2.1. PHOTOGRAPHIC TONEMAPPING (20 POINTS)</h3>
+                    The implementation of two photographic tonemapping methods is shown below.
+                    Tonemaps of two methods are saved into "./tonemap" directory.
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/2-1_code1.png" class="figure-img img-fluid" style="width:50%">
+                            <figurecaption>
+                                <center>
+                                    Fig 5. Code for photographic tonemapping
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    Eight images tonemapped by each RGB channel, which consist of different weight schemes, sources(RAW or JPG), and merging algorithms(linear or logarithmic), are as follows.
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/linears_tent_linear.jpg" class="figure-img img-fluid" style="width:25%">
+                            <figurecaption>
+                                <center>
+                                    Fig 6(a). Linearized JPG + tent + linear merging
+                                </center>
+                            </figurecaption>
+                            <img src="./figs/linears_tent_log.jpg" class="figure-img img-fluid" style="width:25%">
+                            <figurecaption>
+                                <center>
+                                    Fig 6(b). Linearized JPG + tent + logarithmic merging
+                                </center>
+                            </figurecaption>
+                            <img src="./figs/linears_uniform_linear.jpg" class="figure-img img-fluid" style="width:25%">
+                            <figurecaption>
+                                <center>
+                                    Fig 6(c). Linearized JPG + uniform + linear merging
+                                </center>
+                            </figurecaption>
+                            <img src="./figs/linears_uniform_log.jpg" class="figure-img img-fluid" style="width:25%">
+                            <figurecaption>
+                                <center>
+                                    Fig 6(d). Linearized JPG + uniform + logarithmic merging
+                                </center>
+                            </figurecaption>
+                            <img src="./figs/raws_tent_linear.jpg" class="figure-img img-fluid" style="width:50%">
+                            <figurecaption>
+                                <center>
+                                    Fig 6(e). RAW + tent + linear merging
+                                </center>
+                            </figurecaption>
+                            <img src="./figs/raws_tent_log.jpg" class="figure-img img-fluid" style="width:50%">
+                            <figurecaption>
+                                <center>
+                                    Fig 6(f). RAW + tent + logarithmic merging
+                                </center>
+                            </figurecaption>
+                            <img src="./figs/raws_uniform_linear.jpg" class="figure-img img-fluid" style="width:50%">
+                            <figurecaption>
+                                <center>
+                                    Fig 6(g). RAW + uniform + linear merging
+                                </center>
+                            </figurecaption>
+                            <img src="./figs/raws_uniform_log.jpg" class="figure-img img-fluid" style="width:50%">
+                            <figurecaption>
+                                <center>
+                                    Fig 6(h). RAW + uniform + logarithmic merging
+                                </center>
+                            </figurecaption>
+
+                        </figure>
+                    </center>
+                    Most images are noisy, but "Linearized JPG + uniform + linear merging" and "RAW + uniform + logarithmic merging" images are well represented in both bright and dark areas.
+                    The results of applying the luminance method to these two images are as follows.
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/luminance_linears_uniform_linear.jpg" class="figure-img img-fluid" style="width:25%">
+                            <figurecaption>
+                                <center>
+                                    Fig 7(a). Linearized JPG + uniform + linear merging with the luminance method
+                                </center>
+                            </figurecaption>
+                            <img src="./figs/luminance_raws_uniform_log.jpg" class="figure-img img-fluid" style="width:25%">
+                            <figurecaption>
+                                <center>
+                                    Fig 7(b). RAW + uniform + logarithmic merging with the luminance method
+                                </center>
+                                </figurecaption>
+                        </figure>
+                    </center>
+                    The images with the luminance methods shows distorted color, so it seems to be an improperly implemented or inaccurate method.
+                    The following are the results for different values of K and B.
+
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/K03_linears_uniform_linear.jpg" class="figure-img img-fluid" style="width:25%">
+                            <figurecaption>
+                                <center>
+                                    Fig 8(a). Linearized JPG + uniform + linear merging with K=0.3
+                                </center>
+                            </figurecaption>
+                            <img src="./figs/B07_linears_uniform_linear.jpg" class="figure-img img-fluid" style="width:25%">
+                            <figurecaption>
+                                <center>
+                                    Fig 8(b). RAW + uniform + logarithmic merging with B=0.7
+                                </center>
+                                </figurecaption>
+                        </figure>
+                    </center>
+                    The image that changes B has little difference from the original image, and it can be seen that it has become slightly brighter as K increases.
+                    
+                    <h3>2.2. TONEMAPPING USING BILATERAL FILTERING (30 POINTS)</h3>
+                    The followings are the implementation code and results for the tonemapping with bilateral filtering.
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/2-2_code1.png" class="figure-img img-fluid" style="width:25%">
+                            <figurecaption>
+                                <center>
+                                    Fig 9. Code for tonemapping with bilateral filtering
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    <center>
+                        <figure class="figure">
+                            <img src="./figs/BIL_S2_raws_uniform_log.jpg" class="figure-img img-fluid" style="width:25%">
+                            <figurecaption>
+                                <center>
+                                    Fig 10(a). RAW + uniform + logarithmic merging with S=2
+                                </center>
+                            </figurecaption>
+                            <img src="./figs/BIL_S3_raws_uniform_log.jpg" class="figure-img img-fluid" style="width:25%">
+                            <figurecaption>
+                                <center>
+                                    Fig 10(b). RAW + uniform + logarithmic merging with S=3
+                                </center>
+                            </figurecaption>
+                        </figure>
+                    </center>
+                    It can be seen that it is more natural than the same image applied with photographic tonemapping, and the larger the S, the darker it is.
+                    
+
+
+                    <br><br><br>
+                </div>
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    </body>
+</html>
